@@ -1,0 +1,69 @@
+<!--
+ * @Description: 
+ * @Author: Mo Xu
+ * @Date: 2022-01-10 22:33:23
+ * @LastEditors: Mo Xu
+ * @LastEditTime: 2022-01-11 17:30:18
+ * @FilePath: /EasyBuyCar/src/main/resources/templates/chat.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcss.com/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://cdn.bootcss.com/sockjs-client/1.1.4/sockjs.min.js"></script>
+</head>
+
+<body>
+    <label><input id="uid" /></label>
+    <button onclick="login()" id="login">登录</button>
+    <label><input id="msg" placeholder="信息后加 -id，发给指定人" /></label>
+    <button onclick="sendMsg()">发送</button>
+    <div id="user"></div>
+    <div id="greet"></div>
+    <script>
+        let stompClient
+        let socket
+        function login() {
+            // 根据输入的 id 号模拟不同用户的订阅
+            //let socket = new SockJS("http://localhost:8080/api/websocket/${document.getElementById('uid').value}")
+            if ('WebSocket' in window) {
+                socket = new WebSocket(`ws://localhost:8080/api/websocket/${document.getElementById('uid').value}`)
+            } else {
+                alert("当前浏览器不支持websocket")
+            }
+            
+            stompClient = Stomp.over(socket)
+            
+            stompClient.connect({}, function () {
+                // 所有想要接收给指定用户发送的信息的订阅地址都必须加上/user前缀
+                // 这里是为了配合后台的 convertAndSendToUser 方法，如果使用
+                // convertAndSend，就不需要 /user 前缀了，下面会再介绍
+                stompClient.subscribe(`/user/chat/contact`, function (frame) {
+                    let entity = JSON.parse(frame.body)
+                    showGreeting(`收到用户${entity.from}的信息: ${entity.content}`)
+                })
+            })
+
+            document.getElementById('user').innerText = `当前用户为：${document.getElementById('uid').value}`
+
+            function showGreeting(clientMessage) {
+                document.getElementById("greet").innerText += `${clientMessage}\n`
+            }
+        }
+
+        function sendMsg() {
+            const msg = document.getElementById('msg').value
+            stompClient.send("/sendMsg", {}, JSON.stringify({
+                from: document.getElementById('uid').value,
+                to: msg.substring(msg.lastIndexOf('-') + 1),
+                content: msg.substring(0, msg.lastIndexOf('-')),
+                date: new Date()
+            }))
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,110 @@
+<!--
+ * @Description: 
+ * @Author: Mo Xu
+ * @Date: 2022-01-11 18:59:53
+ * @LastEditors: Mo Xu
+ * @LastEditTime: 2022-01-12 21:08:01
+ * @FilePath: /EasyBuyCar/src/main/resources/templates/chatNew.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/sockjs-client/1.4.0/sockjs.min.js"></script>
+    <script src="https://cdn.bootcss.com/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+
+<body>
+    <div class="body-left">
+        <div id="state">未连接</div>
+        <button id="connect" onclick="connect()">连接</button>
+        <button id="disConnect" onclick="disConnect()">断开</button>
+        <div>
+            <label for="from">
+                发送方:<input id="from">
+            </label>
+            <label for="to">
+                接收方:<input id="to"/>
+            </label>
+            <textarea id="content" rows="10"></textarea>
+            <button id="send" onclick="send()">发送</button>
+        </div>
+        <div>
+        </div>
+    </div>
+    <div id="chat" class="body-right">
+        
+    </div>
+</body>
+
+<script>
+    let headers
+    let stompClient
+    let socket
+
+    function connect() {
+        setHeaders()
+        
+        if ('WebSocket' in window) {
+            socket = new WebSocket(`ws://localhost:8080/api/websocket/${document.getElementById('from').value}`)
+        } else {
+            alert("当前浏览器不支持websocket")
+        }
+        // client = Stomp.client('ws://127.0.0.1:8090/websocket/websocket')
+        stompClient = Stomp.over(socket)
+        // 建立连接
+        stompClient.connect(headers,
+            function (frame) {
+                console.log('success', frame);
+                $('#state').text("已连接");
+                sub()
+            },
+            function (error) {
+                console.log('error', error);
+            })
+    }
+
+    // 断开连接
+    function disConnect() {
+        stompClient.disconnect(function () {
+            alert('good bye!')
+        }, headers)
+    }
+
+    // 发送消息
+    // 参数为 地址, 请求头, 内容
+    function send() {
+        stompClient.send("/chat/sendChat", 
+            headers, 
+            JSON.stringify({
+                from: $("#from").val(),
+                to: $("#to").val(),
+                content: $("#content").val(),
+                date: new Date().getTime().toString()
+            })
+        )
+    }
+
+    // 订阅
+    function sub() {
+        var from = $('#from').val()
+        stompClient.subscribe('/user/chat/contact', function (message) {
+            let entity = JSON.parse(message.body)
+            let nowMessage = $('#chat').text()
+            $("#chat").append('<p>' + entity.content + '</p>')
+        }, headers)
+    }
+
+    function setHeaders() {
+        var from = $('#from').val()
+        headers = {
+            'token': from
+        }
+    }
+</script>
+
+</html>

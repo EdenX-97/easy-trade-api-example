@@ -1,0 +1,101 @@
+<!--
+ * @Description: 用户注册时发送的激活邮件模版
+ * @Author: Mo Xu
+ * @Date: 2021-11-08 21:43:15
+ * @LastEditors: Mo Xu
+ * @LastEditTime: 2021-12-16 23:12:55
+ * @FilePath: /EasyBuyCar/src/main/resources/templates/registerTemplate.html
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>激活邮件</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background-color: #ececec;
+        }
+
+        .container {
+            width: 800px;
+            margin: 50px auto;
+        }
+
+        .header {
+            height: 40px;
+            background-color: #0169a5;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            padding-left: 30px;
+        }
+
+        .header h2 {
+            padding-top: 10px;
+            color: white;
+        }
+
+        .content {
+            background-color: #fff;
+            padding-left: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .content h2 {
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        .content p {
+            padding-top: 10px;
+        }
+
+        .footer {
+            background-color: #fff;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            padding: 35px;
+        }
+
+        .footer p {
+            color: #747474;
+            padding-top: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>欢迎加入简单买卖</h2>
+        </div>
+        <div class="content">
+            <h2>亲爱的用户您好</h2>
+            <p>
+                请点击此链接完成验证：<b><a th:href="@{${verifyLink}}" th:text="确认验证邮箱"></a></b>
+                <!-- 您的激活码：<b><span th:text="${verifyLink}"></span></b> -->
+            </p>
+            <p>
+                您注册时的日期：<b><span th:text="${registerTime}"></span></b>
+            </p>
+            <p>当您在使用本网站时，请遵守法律法规</p>
+        </div>
+        <div class="footer">
+            <p>此为系统邮件，请勿回复</p>
+            <p>如非本人操作，请勿点击链接</p>
+            <p>请保管好您的信息，避免被他人盗用</p>
+            <p>©xxxxxxxx</p>
+        </div>
+    </div>
+</body>
+
+</html>

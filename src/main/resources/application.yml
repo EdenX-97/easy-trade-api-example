@@ -1,0 +1,223 @@
+################### 服务器的server-context地址配置 ##########################
+server:
+  servlet:
+    context-path: /api
+  port: 8888
+
+################### 日志信息配置 ##########################
+logging:
+  level:
+    org:
+      springframework: INFO
+
+spring:
+  ################### 开发时启用热部署 ##########################
+  devtools:
+    restart:
+      enabled: true
+  ################### Mongodb配置 ##########################
+  data:
+    mongodb:
+      auto-index-creation: true
+      host:
+      port:
+      authentication-database:
+      database:
+      username:
+      password:
+  ################### Redis配置 ##########################
+  redis:
+    host:
+    port:
+    database: 0
+    password:
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
+    timeout: 5000ms
+    custom:
+      # redis数据自定义过期时间，用于点击、浏览、收藏，默认为7天 = 60 * 60 * 24 * 7 秒
+      expire: 604800
+  ################### Cache配置 ##########################
+  cache:
+    type: redis
+    # redis缓存默认过期时间为24小时
+    expire: 24
+  ################### 邮件配置 ##########################
+  mail:
+    host:
+    port: 25
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          starttls:
+            required: true
+    verify:
+      prelink: http://localhost:8080/user/verifyEmail/
+      subject: 欢迎加入简单买卖
+  ################### Thymeleaf配置 ##########################
+  thymeleaf:
+    prefix:classpath: /templates/
+    suffix: .html
+    cache: false
+  ################### 上传文件大小配置 ##########################
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 120MB
+  ################### 文件保存配置 ##########################
+  web:
+    resources:
+      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${web.upload-path}
+
+################### SSH配置 ##########################
+ssh:
+  #实例的地址
+  host:
+  port:
+  user:
+  password:
+
+################### JWT配置 ##########################
+jwt:
+  # 15天 = 60 * 60 * 24 * 3 秒
+  expiration: 1296000
+  prefix: "Bearer "
+  authorization: Authorization
+  secret:
+
+################### Swagger配置 ##########################
+springdoc:
+  api-docs:
+    path: /api-docs
+
+################### 载具广告相关配置 ##########################
+vehiclead:
+  file:
+    image:
+      # 图片最大10MB
+      max-file-size: 10000000
+      max-num: 6
+    video:
+      # 视频最大100MB
+      max-file-size: 100000000
+      max-num: 2
+  create:
+    # 限制最大创建每种广告数为1000，防止恶意创建
+    max-num: 1000
+  realPrice:
+    # 将redis更新到mongodb的定时间隔，3天 = 1000 * 60 * 60 * 24 * 3 毫秒，从启动项目后开始计算
+    # vehiclead.update.redis-to-mongodb.time=259200000
+    # 广告完成时输入的真实价格必须在原价一定的上下百分比内
+    percent: 100
+
+################### 短信服务相关配置 ##########################
+sms:
+  aliyun:
+    access-key-id:
+    access-key-secret:
+    endpoint:
+  verify:
+    # 验证码短信过期时间为10分钟 = 600 秒
+    expire: 600
+    # 重新发送验证码短信时间为1分钟后 = 60秒
+    resend: 60
+
+################### 支付宝相关配置 ##########################
+alipay:
+  protocal: https
+  gatewayHost:
+  signType:
+  appId:
+  merchantPrivateKey:
+  alipayPublicKey:
+  returnUrl: https://jiandanmaimai.com/pay/validateTrade
+  tradeExpireMins: 30
+
+################### 聊天相关配置 ##########################
+chat:
+  system:
+    contactId:
+
+################### 用户相关配置 ##########################
+user:
+  clear:
+    # 如果超过一定天数没有登录，用户的所有广告将会被取消
+    days: 60
+    # 取消广告有一定的缓冲时间
+    buffer: 10
+  favorite:
+    # 用户收藏的最大载具数量
+    max: 50
+  security:
+    # 安全问题最大长度
+    max: 10
+    # 安全问题最小长度
+    min: 1
+
+################### 广告价格配置 ##########################
+price:
+  car:
+    standard:
+      zerotofive: 49
+      fivetoten: 69
+      tentotwenty: 99
+      twentytoforty: 139
+      fortytoeighty: 179
+      eightytoonehunduredforty: 219
+      onehunduredfortytomore: 259
+    advanced:
+      zerotofive: 69
+      fivetoten: 99
+      tentotwenty: 139
+      twentytoforty: 179
+      fortytoeighty: 219
+      eightytoonehunduredforty: 259
+      onehunduredfortytomore: 299
+    elite:
+      zerotofive: 99
+      fivetoten: 139
+      tentotwenty: 179
+      twentytoforty: 219
+      fortytoeighty: 259
+      eightytoonehunduredforty: 299
+      onehunduredfortytomore: 349
+  motor:
+    standard:
+      zerotofive: 19
+      fivetoten: 29
+      tentofifty: 49
+      fiftytoten: 69
+      tentotwenty: 99
+      twentytomore: 139
+    advanced:
+      zerotofive: 29
+      fivetoten: 39
+      tentofifty: 69
+      fiftytoten: 99
+      tentotwenty: 139
+      twentytomore: 179
+    elite:
+      zerotofive: 39
+      fivetoten: 49
+      tentofifty: 99
+      fiftytoten: 139
+      tentotwenty: 179
+      twentytomore: 209
+
+################### 分页信息 ##########################
+page:
+  pagesize: 10
+
+################### 微信支付 ##########################
+wechat:
+  privateKey:
+  mchId:
+  mchSerialNo:
+  apiV3Key:
+  appId:  d
